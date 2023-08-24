@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gamestudio</title>
+    <link rel="stylesheet" href="/css/stylesheet.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+</head>
+<body>
+<nav>
+    <ul>
+        <li>
+            <form method="post" action="/nonogram/newgame">
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                <button type="submit" id="resetBtns">New game</button>
+            </form>
+        </li>
+        <li> <span th:if="${@userController.isLogged()}">
+            <a class="logout" href="/user/logout">Logout</a>
+            <br/>
+        </span></li>
+        <li><span th:if="${@userController.isLogged() and @userController.getLoggedUser() != null}">
+        Logged in as: <span th:text="${@userController.getLoggedUser().getLogin()}"></span>
+</span>
+        </li>
+    </ul>
+</nav>
+
+<h1>Nonogram</h1>
+<div class="timer">
+    <div id="timer"></div>
+    <p>seconds</p></br>
+</div>
+<div class="timerbutton">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="resetBtn">Reset</button>
+
+
+</div>
+
+
+<h1 th:text="${time}"></h1>
+<div>
+    <div class="newgame">
+        <p class="curr">Current color: <span th:utext="${@nonogramController.getColor}"></span></p>
+
+    </div>
+
+
+    <table class="center">
+        <span th:utext="${@nonogramController.getHtmlField1}"></span>
+
+    </table>
+
+
+</div>
+<div class="options">
+    <a href="/nonogram/mark" class="mark" th:text="${'Change to ' + (@nonogramController.marking ? 'Color' : 'Mark')}"/><br>
+    <div><p th:utext="${@nonogramController.printColors}">Colors: </p></div>
+    <a href="/nonogram/hint" class="btn">Hint</a>
+    <span th:text="${@nonogramController.gethintsLeft}" class="hints-left"></span>
+
+
+</div>
+
+
+<div class="tables">
+    <table class="comments">
+        <caption>Comments</caption>
+        <thead>
+
+        <tr>
+            <th>Player</th>
+            <th>Comment</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment, commentIndex : ${comments}" th:if="${commentIndex.index < 5}">
+
+            <td th:text="${comment.player}"></td>
+            <td th:text="${comment.comment}"></td>
+            <td style="text-align:center" th:text="${comment.commentedAt}"></td>
+        </tr>
+        <tr th:unless="${#lists.isEmpty(comments)}">
+            <td colspan="3" style="text-align:center;">Showing first 5 comments.</td>
+        </tr>
+        </tbody>
+
+    </table>
+    <table class="comments">
+        <caption>Rating</caption>
+        <thead>
+        <tr>
+            <th>Player</th>
+            <th>Rating</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="rating, ratingIndex : ${ratings}" th:if="${ratingIndex.index < 5}">
+            <td th:text="${rating.player}"></td>
+            <td th:text="${rating.rating}"></td>
+            <td style="text-align:center" th:text="${rating.ratedAt}"></td>
+        </tr>
+
+        <tr th:unless="${#lists.isEmpty(ratings)}">
+            <td colspan="3" style="text-align:center;">Showing last five ratings!</td>
+        </tr>
+        </tbody>
+
+    </table>
+    <div class="inputs">
+    <span th:if="${@userController.isLogged}">
+        <form class="comment-form" action="/nonogram/comment" method="post">
+            Comment: <input type="text" name="comment"/>
+            <button class="sub" type="submit">Submit</button>
+        </form>
+    </span>
+        <span th:if="${@userController.isLogged}">
+        <form class="rating-form" action="/nonogram/rating" method="post">
+            Rating(0-5): <input type="int" name="rating"/>
+            <button class="sub" type="submit">Submit</button>
+        </form>
+    </span>
+    </div>
+    <div>
+        <p>Average rating: <span th:text="${average_rating}"></span></p>
+    </div>
+
+
+
+</div>
+<script src="js/script.js"></script>
+
+
+</body>
+</html>

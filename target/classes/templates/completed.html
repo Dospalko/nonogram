@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Completed</title>
+  <link rel="stylesheet" href="/css/completed.css"/>
+</head>
+<body>
+
+
+<h1 class="text" th:text="${message}"></h1>
+<p class="text" th:text="${step}">Steps</p><p>steps</p>
+
+<form method="post" action="/nonogram/newgame">
+  <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+  <button type="submit">New game</button>
+</form>
+
+<table class="comments">
+  <thead>
+  <tr>
+    <th>Player</th>
+    <th>Score</th>
+    <th>Date</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="score, scoreIndex : ${scores}" th:if="${scoreIndex.index < 5}">
+    <td th:text="${score.player}"></td>
+    <td th:text="${score.points}"></td>
+    <td style="text-align:center" th:text="${score.playedAt}"></td>
+  </tr>
+  <tr th:unless="${#lists.isEmpty(scores)}">
+    <td colspan="3" style="text-align:center;">Showing top scores!</td>
+  </tr>
+  </tbody>
+
+</table>
+</body>
+</html>
